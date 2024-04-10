@@ -1,3 +1,5 @@
+import Items.Weapon;
+
 import java.util.ArrayList;
 
 public class Enemy {
@@ -5,7 +7,7 @@ public class Enemy {
     int health;
     int mana;
     int armorRating;
-    Items equippedWeapon;
+    Weapon equippedWeapon;
     int expForKill;
 
     public Enemy(String name) {

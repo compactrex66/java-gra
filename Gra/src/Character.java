@@ -1,3 +1,5 @@
+import Items.Weapon;
+
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -15,14 +17,15 @@ public class Character {
     int goldCoins = 0;
     int armorRating = 0;
     String name;
-    Items equippedWeapon;
-    ArrayList<Items> characterItems = new ArrayList<>();
+    boolean pastIntro = false;
+    Weapon equippedWeapon;
+    ArrayList<Object> characterItems = new ArrayList<>();
 
     public Character() {
 
     }
 
-    public Character(Levels level, int experience, CharacterClass charactersClass, int health, int mana, short strength, short inteligence, short constitution, short charisma, short dexterity, int goldCoins, int armorRating, String name, Items equippedWeapon) {
+    public Character(Levels level, int experience, CharacterClass charactersClass, int health, int mana, short strength, short inteligence, short constitution, short charisma, short dexterity, int goldCoins, int armorRating, String name, Weapon equippedWeapon) {
         this.level = level;
         this.experience = experience;
         this.charactersClass = charactersClass;
@@ -68,8 +71,8 @@ public class Character {
         Functions.printSpaces(amountOfSpaces);
         System.out.println("Charisma: " + this.charisma);
 
-        amountOfSpaces = 20 - ("Weapon: " + this.equippedWeapon).length();
-        System.out.print("Weapon: " + this.equippedWeapon);
+        amountOfSpaces = 20 - ("Weapon: " + this.equippedWeapon.name).length();
+        System.out.print("Weapon: " + this.equippedWeapon.name);
         Functions.printSpaces(amountOfSpaces);
         System.out.println("Dexterity: " + this.dexterity);
     }
