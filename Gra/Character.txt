@@ -1,1 +1,0 @@
-LEVEL_3;0;FIGHTER;57;35;27;0;25;12;0;114;0;Zolthar;true;Sword
