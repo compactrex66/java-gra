@@ -7,6 +7,12 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 import Items.*;
+import Items.Armors.ChainmailArmor;
+import Items.Armors.DragonScaleArmor;
+import Items.Armors.IronPlateArmor;
+import Items.Armors.LeatherArmor;
+import Items.Consumables.HealthPotion;
+import Items.Consumables.ManaPotion;
 import Items.Weapons.Bow;
 import Items.Weapons.Greataxe;
 import Items.Weapons.Staff;
@@ -16,12 +22,21 @@ public class Main {
     private static List<Item> itemPool = new ArrayList<>();
     private static List<Weapon> weaponPool = new ArrayList<>();
     private static List<Armor> armorPool = new ArrayList<>();
+    private static List<Consumable> consumablePool = new ArrayList<>();
 
     static void initiateItemPool() {
         weaponPool.add(new Sword());
         weaponPool.add(new Greataxe());
         weaponPool.add(new Bow());
         weaponPool.add(new Staff());
+
+        armorPool.add(new LeatherArmor());
+        armorPool.add(new ChainmailArmor());
+        armorPool.add(new IronPlateArmor());
+        armorPool.add(new DragonScaleArmor());
+
+        consumablePool.add(new HealthPotion());
+        consumablePool.add(new ManaPotion());
 
         itemPool.addAll(weaponPool);
     }

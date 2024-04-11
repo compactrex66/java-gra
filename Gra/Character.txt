@@ -1,1 +1,1 @@
-LEVEL_3;0;FIGHTER;57;35;27;0;25;12;0;114;0;Zolthar;true;Sword
+LEVEL_3;57;FIGHTER;52;35;27;0;25;12;0;21;0;Zolthar;true;Sword;Items.Weapons.Staff@3b95a09c
