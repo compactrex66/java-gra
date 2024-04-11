@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
+
+import Enemies.Enemy;
+import Enemies.Functions;
+import Enemies.Goblin;
 import Items.*;
 import Items.Armors.ChainmailArmor;
 import Items.Armors.DragonScaleArmor;
@@ -17,6 +21,9 @@ import Items.Weapons.Bow;
 import Items.Weapons.Greataxe;
 import Items.Weapons.Staff;
 import Items.Weapons.Sword;
+import Character.Character;
+import Character.CharacterClass;
+import Character.Levels;
 
 public class Main {
     private static List<Item> itemPool = new ArrayList<>();
@@ -39,6 +46,8 @@ public class Main {
         consumablePool.add(new ManaPotion());
 
         itemPool.addAll(weaponPool);
+        itemPool.addAll(armorPool);
+        itemPool.addAll(consumablePool);
     }
     static boolean isNegative(int number) {
         return number < 0;
@@ -126,7 +135,7 @@ public class Main {
                 player.health -= damage;
             }
             if(enemies.isEmpty()) {
-                break fightLoop;
+                break;
             }
 
             pressEnterToContinue();
@@ -171,11 +180,16 @@ public class Main {
         Scanner input = new Scanner(System.in);
         int amountOfItems = 5;
         System.out.println("While exploring you found a shop");
-        int iterator = 1;
-        int choice = 10;
+        int iterator;
+        int choice;
         ArrayList<Item> availableItems = new ArrayList<>();
         for (int i = 0; i < amountOfItems; i++) {
-            availableItems.add(itemPool.get(Functions.randomInt(0, itemPool.size() - 1)));
+            choice = Functions.randomInt(0, itemPool.size() - 1);
+            if (!availableItems.contains(itemPool.get(choice))) {
+                availableItems.add(itemPool.get(choice));
+            } else {
+                i--;
+            }
         }
 
         System.out.println("As you enter the shop from across the counter shopkeeper says: \"Welcome. Would you like to buy anything ?\".");
@@ -187,14 +201,16 @@ public class Main {
                 System.out.println(iterator + ". " + item.name + " for " + item.cost);
                 iterator++;
             }
-            System.out.println(iterator + ". Exit");
-            choice = input.nextInt();
-            if (choice == iterator)
+            System.out.println("0. Exit");
+            choice = input.nextInt() - 1;
+            if (choice == -1)
                 break;
-            choice--;
 
             if (player.goldCoins - availableItems.get(choice).cost >= 0) {
                 player.characterItems.add(availableItems.get(choice));
+                for (Item item : player.characterItems) {
+                    System.out.println(item.name);
+                }
                 System.out.println("You bought a " + availableItems.get(choice).name + " for " + availableItems.get(choice).cost + " gold coins.");
                 player.goldCoins -= availableItems.get(choice).cost;
                 availableItems.remove(choice);
@@ -219,22 +235,50 @@ public class Main {
         player.mana = player.level.mana + (player.level.ordinal() + 1) * (player.inteligence / 2);
         System.out.println("You rest regenerating your health and mana");
     }
-    static void printInventory(Character player) {
+    static void inventoryFeature(Character player) {
         Scanner input = new Scanner(System.in);
 
-        String choice = "";
-        int iterator = 1;
-        if (player.characterItems.isEmpty()) {
-            System.out.println("You have no items in your inventory.");
-            pressEnterToContinue();
-        } else {
-            System.out.println("Items in your inventory are: ");
-        }
-        for (Object item : player.characterItems) {
-            System.out.println(iterator + ". " + item);
-            iterator++;
-        }
+        int choice;
+        int iterator;
 
+        while (true) {
+            iterator = 1;
+            if (player.characterItems.isEmpty()) {
+                System.out.println("You have no items in your inventory.");
+                pressEnterToContinue();
+                return;
+            } else {
+                System.out.println("Items in your inventory are: ");
+            }
+            for (Item item : player.characterItems) {
+                System.out.println(iterator + ". " + item.name);
+                iterator++;
+            }
+            System.out.println("0. Exit Inventory");
+            choice = input.nextInt() - 1;
+            if (choice == -1)
+                return;
+            if (weaponPool.contains(player.characterItems.get(choice))) {
+                player.characterItems.add(player.equippedWeapon);
+                player.equippedWeapon = (Weapon) player.characterItems.get(choice);
+                player.characterItems.remove(choice);
+                System.out.println("You equiped a " + player.equippedWeapon.name);
+            } else if (armorPool.contains(player.characterItems.get(choice))) {
+                player.characterItems.add(player.wornArmor);
+                player.wornArmor = (Armor) player.characterItems.get(choice);
+                player.characterItems.remove(choice);
+                System.out.println("You equiped a " + player.wornArmor.name);
+            } else {
+                if (player.characterItems.get(choice).name.equals("Health Potion")) {
+                    ((HealthPotion) player.characterItems.get(choice)).drinkHealthPotion(player);
+                }
+                if (player.characterItems.get(choice).name.equals("Mana Potion")) {
+                    ((ManaPotion) player.characterItems.get(choice)).drinkManaPotion(player);
+                }
+                System.out.println("You drank your " + player.characterItems.get(choice).name);
+                player.characterItems.remove(choice);
+            }
+        }
     }
     static Character createCharacter() {
         Character player = new Character();
@@ -299,6 +343,7 @@ public class Main {
                 sum += player.dexterity;
             } catch (InputMismatchException e) {
                 System.out.println("Wrong input. Try again");
+                sum = 0;
                 input.nextLine();
                 continue;
             }
@@ -322,7 +367,70 @@ public class Main {
         player.name = input.nextLine();
         //capitalize the first letter
         player.name = player.name.substring(0, 1).toUpperCase() + player.name.substring(1);
+        player.combatRating = Functions.countCombatRating(player.health, player.mana, player.equippedWeapon.minDamage, player.equippedWeapon.maxDamage, player.armorRating);
         return player;
+    }
+    static void loadCharacter(Character player, Object[] characterArr) {
+        player.level = Levels.valueOf(characterArr[0].toString());
+        switch ((String) characterArr[2]) {
+            case "FIGHTER" -> player.charactersClass = CharacterClass.FIGHTER;
+            case "RANGER" -> player.charactersClass = CharacterClass.RANGER;
+            case "WIZARD" -> player.charactersClass = CharacterClass.WIZARD;
+        }
+        player.experience = Integer.parseInt(characterArr[1].toString());
+        player.health = Integer.parseInt(characterArr[3].toString());
+        player.mana = Integer.parseInt(characterArr[4].toString());
+        player.strength = Short.parseShort(characterArr[5].toString());
+        player.inteligence = Short.parseShort(characterArr[6].toString());
+        player.constitution = Short.parseShort(characterArr[7].toString());
+        player.charisma = Short.parseShort(characterArr[8].toString());
+        player.dexterity = Short.parseShort(characterArr[9].toString());
+        player.goldCoins = Integer.parseInt(characterArr[10].toString());
+        player.armorRating = Integer.parseInt(characterArr[11].toString());
+        player.name = characterArr[12].toString();
+        switch (characterArr[13].toString()) {
+            case "true" -> player.pastIntro = true;
+            case "false" -> player.pastIntro = false;
+        }
+        for (Weapon weapon : weaponPool) {
+            if (weapon.name.equals(characterArr[14].toString())) {
+                player.equippedWeapon = weapon;
+                break;
+            }
+        }
+        for (Armor armor : armorPool) {
+            if (characterArr[15].equals("None"))
+                break;
+            if (armor.name.equals(characterArr[15].toString())) {
+                player.wornArmor = armor;
+                break;
+            }
+        }
+        for (int i = 16; i < characterArr.length; i++) {
+            for (Item item : itemPool) {
+                if (item.name.equals(characterArr[i])) {
+                    player.characterItems.add(item);
+                }
+            }
+        }
+        player.combatRating = Functions.countCombatRating(player.health, player.mana, player.equippedWeapon.minDamage, player.equippedWeapon.maxDamage, player.armorRating);
+    }
+    static void saveCharacter(Character player) {
+        try {
+            FileWriter fileWriter = new FileWriter("Character.txt");
+            fileWriter.write(player.level + ";" + player.experience + ";" + player.charactersClass + ";" + player.health + ";" + player.mana + ";" + player.strength + ";" + player.inteligence + ";" + player.constitution + ";" + player.charisma + ";" + player.dexterity + ";" + player.goldCoins + ";" + player.armorRating + ";" + player.name + ";" + player.pastIntro + ";" + player.equippedWeapon.name + ";");
+            if (player.wornArmor != null) {
+                fileWriter.write(player.wornArmor.name);
+            } else {
+                fileWriter.write("None");
+            }
+            for (Item item : player.characterItems) {
+                fileWriter.write(";" + item.name);
+            }
+            fileWriter.close();
+        } catch (IOException e) {
+            System.out.println("Something went wrong");
+        }
     }
 
     public static void main(String[] args) {
@@ -358,41 +466,7 @@ public class Main {
             if (loadedCharacter == iterator + 1) {
                player = createCharacter();
             } else {
-                characterArr = characters.get(loadedCharacter-1);
-                player.level = Levels.valueOf(characterArr[0].toString());
-                switch ((String) characterArr[2]) {
-                    case "FIGHTER" -> player.charactersClass = CharacterClass.FIGHTER;
-                    case "RANGER" -> player.charactersClass = CharacterClass.RANGER;
-                    case "WIZARD" -> player.charactersClass = CharacterClass.WIZARD;
-                }
-                player.experience = Integer.parseInt(characterArr[1].toString());
-                player.health = Integer.parseInt(characterArr[3].toString());
-                player.mana = Integer.parseInt(characterArr[4].toString());
-                player.strength = Short.parseShort(characterArr[5].toString());
-                player.inteligence = Short.parseShort(characterArr[6].toString());
-                player.constitution = Short.parseShort(characterArr[7].toString());
-                player.charisma = Short.parseShort(characterArr[8].toString());
-                player.dexterity = Short.parseShort(characterArr[9].toString());
-                player.goldCoins = Integer.parseInt(characterArr[10].toString());
-                player.armorRating = Integer.parseInt(characterArr[11].toString());
-                player.name = characterArr[12].toString();
-                switch (characterArr[13].toString()) {
-                    case "true" -> player.pastIntro = true;
-                    case "false" -> player.pastIntro = false;
-                }
-                for (Weapon weapon : weaponPool) {
-                    if (weapon.name.equals(characterArr[14].toString())) {
-                        player.equippedWeapon = weapon;
-                        break;
-                    }
-                }
-                for (int i = 15; i < characterArr.length; i++) {
-                    for (Item item : itemPool) {
-                        if (item.equals(characterArr[i])) {
-                            player.characterItems.add(item);
-                        }
-                    }
-                }
+                loadCharacter(player, characters.get(loadedCharacter-1));
             }
 
             if (!player.pastIntro) {
@@ -403,7 +477,7 @@ public class Main {
 
                 System.out.println("You wake up on a battlefield among what seems like thousands of fallen soldiers. You don't remember much. Except for your name.");
                 System.out.println("As you stand up you get a little light headed, looking around your surroundings you realise you are in the middle of a desert. On the horizon you spot an oasis.");
-                System.out.println("Stumbling over corpses of warriors you begin to walk in a direction of the oasis. While getting closer to your destination you think about what happened here, and why am i the only one that's survived and... .");
+                System.out.println("Stumbling over corpses of fallen warriors you begin to walk in a direction of the oasis. While getting closer to your destination you think about what happened here, and why am i the only one that's survived and... .");
                 System.out.println("Your thoughts are interrupted by a strange noise beneath your feet. You decide not to investigate and keep on walking very disturbed. It takes much of your remaining strength but you finally get there.");
                 System.out.println("You kneel to drink the water from the oasis lake. You drink until your thirst is quenched and as you feel satisfied you pass out from the heat of the desert day. You wake up at night and a sensation goes through your body. Shivers, you are cold.");
                 while (!choice.equals("1")) {
@@ -424,27 +498,14 @@ public class Main {
                 System.out.println("3. Check inventory");
                 System.out.println("4. Save");
                 System.out.println("5. Save and exit");
-                choice = "";
                 choice = input.next();
                 switch (choice) {
                     case "1" -> explore(player);
                     case "2" -> rest(player);
-                    case "3" -> printInventory(player);
-                    case "4" -> {
-                        FileWriter fileWriter = new FileWriter("Character.txt");
-                        fileWriter.write(player.level + ";" + player.experience + ";" + player.charactersClass + ";" + player.health + ";" + player.mana + ";" + player.strength + ";" + player.inteligence + ";" + player.constitution + ";" + player.charisma + ";" + player.dexterity + ";" + player.goldCoins + ";" + player.armorRating + ";" + player.name + ";" + player.pastIntro + ";" + player.equippedWeapon.name);
-                        for (Object item : player.characterItems) {
-                            fileWriter.write(";" + item);
-                        }
-                        fileWriter.close();
-                    }
+                    case "3" -> inventoryFeature(player);
+                    case "4" -> saveCharacter(player);
                     case "5" -> {
-                        FileWriter fileWriter = new FileWriter("Character.txt");
-                        fileWriter.write(player.level + ";" + player.experience + ";" + player.charactersClass + ";" + player.health + ";" + player.mana + ";" + player.strength + ";" + player.inteligence + ";" + player.constitution + ";" + player.charisma + ";" + player.dexterity + ";" + player.goldCoins + ";" + player.armorRating + ";" + player.name + ";" + player.pastIntro + ";" + player.equippedWeapon.name);
-                        for (Object item : player.characterItems) {
-                            fileWriter.write(";" + item);
-                        }
-                        fileWriter.close();
+                        saveCharacter(player);
                         break mainGameLoop;
                     }
                 }

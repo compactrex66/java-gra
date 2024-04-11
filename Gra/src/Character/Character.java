@@ -1,31 +1,38 @@
+package Character;
+
+import Enemies.Functions;
+import Items.Armor;
+import Items.Item;
 import Items.Weapon;
 
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Character {
-    Levels level = Levels.LEVEL_1;
-    int experience = 0;
-    CharacterClass charactersClass;
-    int health = this.level.health;
-    int mana = this.level.mana;
-    short strength;
-    short inteligence;
-    short constitution;
-    short charisma;
-    short dexterity;
-    int goldCoins = 0;
-    int armorRating = 0;
-    String name;
-    boolean pastIntro = false;
-    Weapon equippedWeapon;
-    ArrayList<Object> characterItems = new ArrayList<>();
+    public Levels level = Levels.LEVEL_1;
+    public int experience = 0;
+    public CharacterClass charactersClass;
+    public int health = this.level.health;
+    public int mana = this.level.mana;
+    public short strength;
+    public short inteligence;
+    public short constitution;
+    public short charisma;
+    public short dexterity;
+    public int goldCoins = 0;
+    public int armorRating = 0;
+    public String name;
+    public boolean pastIntro = false;
+    public Weapon equippedWeapon;
+    public Armor wornArmor;
+    public ArrayList<Item> characterItems = new ArrayList<>();
+    public int combatRating;
 
     public Character() {
 
     }
 
-    public Character(Levels level, int experience, CharacterClass charactersClass, int health, int mana, short strength, short inteligence, short constitution, short charisma, short dexterity, int goldCoins, int armorRating, String name, Weapon equippedWeapon) {
+    public Character(Levels level, int experience, CharacterClass charactersClass, int health, int mana, short strength, short inteligence, short constitution, short charisma, short dexterity, int goldCoins, int armorRating, String name, Weapon equippedWeapon, Armor wornArmor) {
         this.level = level;
         this.experience = experience;
         this.charactersClass = charactersClass;
@@ -40,10 +47,11 @@ public class Character {
         this.armorRating = armorRating;
         this.name = name;
         this.equippedWeapon = equippedWeapon;
+        this.wornArmor = wornArmor;
         this.characterItems = characterItems;
     }
 
-    void printAllInfo() {
+    public void printAllInfo() {
         int amountOfSpaces = 0;
         System.out.println("---" + this.name + "---");
         amountOfSpaces = 20 - ("Your level: " + (this.level.ordinal() + 1)).length();
@@ -77,7 +85,7 @@ public class Character {
         System.out.println("Dexterity: " + this.dexterity);
     }
 
-    void addExp(int experience) {
+    public void addExp(int experience) {
         this.experience += experience;
         this.levelUp();
     }

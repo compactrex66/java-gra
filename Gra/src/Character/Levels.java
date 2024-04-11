@@ -1,3 +1,5 @@
+package Character;
+
 public enum Levels {
     LEVEL_1	(	15	,	25	),
     LEVEL_2	(	18	,	30	),
@@ -1000,8 +1002,8 @@ public enum Levels {
     LEVEL_999	(	3009	,	5015	),
     LEVEL_1000	(	3012	,	5020	);
 
-    int health;
-    int mana;
+    public int health;
+    public int mana;
 
     Levels(int health, int mana) {
         this.health = health;
