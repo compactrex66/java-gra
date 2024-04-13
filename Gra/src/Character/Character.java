@@ -4,6 +4,7 @@ import Enemies.Functions;
 import Items.Armor;
 import Items.Item;
 import Items.Weapon;
+import Spells.Spell;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -26,6 +27,7 @@ public class Character {
     public Weapon equippedWeapon;
     public Armor wornArmor;
     public ArrayList<Item> characterItems = new ArrayList<>();
+    public ArrayList<Spell> characterSpells = new ArrayList<>();
     public int combatRating;
 
     public Character() {

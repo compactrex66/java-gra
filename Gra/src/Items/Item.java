@@ -5,6 +5,9 @@ public class Item {
     public int cost;
     public double weight;
 
+    public Item() {
+    }
+
     public Item(String name, int cost, double weight) {
         this.name = name;
         this.cost = cost;
