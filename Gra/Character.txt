@@ -1,2 +1,2 @@
-Zolthar;461;FIGHTER;84;40;33;0;30;2;0;399;0;LEVEL_4;true;Sword;None;Chain Mail Armor
-Icicle;
+Zolthar;224;WIZARD;26;45;0;40;22;0;0;31;0;LEVEL_1;true;Staff;None;Mana Potion
+Firebolt;Icicle;

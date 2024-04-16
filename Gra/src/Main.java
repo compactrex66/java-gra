@@ -42,6 +42,7 @@ public class Main {
         itemPool.putAll(consumablePool);
 
         spellPool.put(Keys.ICICLE, new Icicle("Icicle", "Cast an icicle that damages one enemy and lowers their armor rating", 4, 7, 5, false));
+        spellPool.put(Keys.FIREBOLT, new Icicle("Firebolt", "Cast a bolt of fire that damages one enemy", 8, 14, 5, false));
 
         refreshEnemyPool();
     }
@@ -129,7 +130,7 @@ public class Main {
                                 action = input.nextInt() - 1;
                                 if (action == -1)
                                     break;
-                                spellPool.get(player.characterSpells.get(action).name).cast(enemies, player);
+                                player.characterSpells.get(action).cast(enemies, player);
                                 endYourTurn = true;
                                 break;
                             }
@@ -279,7 +280,7 @@ public class Main {
 
         while (true) {
             iterator = 1;
-            if (player.characterItems.get(0) == null) {
+            if (player.characterItems.isEmpty()) {
                 System.out.println("You have no items in your inventory.");
                 pressEnterToContinue();
                 return;
@@ -313,11 +314,13 @@ public class Main {
     }
     static void seeSpells(Character player) {
         Scanner input = new Scanner(System.in);
-        int iterator = 1;
+        int iterator;
         int choice;
         while (true) {
+            iterator = 1;
         for (Spell spell : player.characterSpells) {
             System.out.println(iterator + ". " + spell.name);
+            iterator++;
         }
         System.out.println("0. Exit Spells");
             choice = input.nextInt() - 1;
@@ -355,6 +358,8 @@ public class Main {
                 case "wizard" -> {
                     player.charactersClass = CharacterClass.WIZARD;
                     player.equippedWeapon = weaponPool.get(Keys.STAFF);
+                    player.characterSpells.add(spellPool.get(Keys.FIREBOLT));
+                    player.characterSpells.add(spellPool.get(Keys.ICICLE));
                     chosenCorrectly = true;
                 }
                 default -> System.out.println("There is no such option. Choose again");
@@ -460,7 +465,8 @@ public class Main {
                 fileWriter.write("None");
             }
             for (Item item : player.characterItems) {
-                fileWriter.write(";" + item.name);
+                if (item != null)
+                    fileWriter.write(";" + item.name);
             }
             fileWriter.write("\n");
             for (Spell spell : player.characterSpells) {

@@ -10,6 +10,7 @@ public enum Keys {
         HEALTH_POTION(),
         MANA_POTION(),
         ICICLE(),
+        FIREBOLT(),
         GOBLIN(),
         ORC();
 }

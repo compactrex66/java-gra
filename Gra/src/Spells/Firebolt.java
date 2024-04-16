@@ -3,15 +3,14 @@ package Spells;
 import Enemies.Enemy;
 import Enemies.Functions;
 import Character.Character;
-
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Icicle extends Spell {
+public class Firebolt extends Spell {
     public int minDamage;
     public int maxDamage;
 
-    public Icicle(String name, String description, int minDamage, int maxDamage, int manaCost, boolean usableOutsideCombat) {
+    public Firebolt(String name, String description, int minDamage, int maxDamage, int manaCost, boolean usableOutsideCombat) {
         super(name, description, manaCost, usableOutsideCombat);
         this.minDamage = minDamage;
         this.maxDamage = maxDamage;
