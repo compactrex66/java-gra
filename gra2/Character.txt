@@ -1,2 +1,0 @@
-Zolthar;0;FIGHTER;58;40;42;11;41;13;11;32;0;LEVEL_2;true;Greataxe;None
-Icicle;
