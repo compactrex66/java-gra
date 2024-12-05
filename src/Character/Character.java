@@ -80,6 +80,7 @@ public class Character {
         int sum = 0;
         System.out.println("Choose your ability scores. The sum of them must add up to 62");
         while (true) {
+            sum = 0;
             try {
                 System.out.print("Strength: ");
                 this.strength = input.nextShort();
@@ -177,7 +178,7 @@ public class Character {
                 this.characterSpells.add(spellPool.get(Keys.valueOf(Functions.stringToKey(spell))));
             }
         } catch (Exception e) {
-            System.out.println("blad");
+            System.out.println("Error");
         }
     }
     public void printAllInfo() {
