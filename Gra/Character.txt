@@ -1,2 +1,0 @@
-Zolthar;224;WIZARD;26;45;0;40;22;0;0;31;0;LEVEL_1;true;Staff;None;Mana Potion
-Firebolt;Icicle;
